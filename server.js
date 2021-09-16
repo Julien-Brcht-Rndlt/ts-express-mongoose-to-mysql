@@ -9,6 +9,10 @@ mongoose
     .then(() => console.log('Connected to wildersdb database'))
     .catch((err) => console.log(`Error while connecting to database: ${err.message}`));
 
+//common required middlewares declaration
+app.use(express.json);
+app.use(express.urlencoded);
+
 //path '/wilders' routing  + controller
 const wilderController = require('../controllers/wilderController');
 app.use('/api/wilders', wilderController);
