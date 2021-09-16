@@ -9,6 +9,10 @@ mongoose
     .then(() => console.log('Connected to wildersdb database'))
     .catch((err) => console.log(`Error while connecting to database: ${err.message}`));
 
+//path '/wilders' routing  + controller
+const wilderController = require('../controllers/wilderController');
+app.use('/api/wilders', wilderController);
+
 app.listen(8080, (err) => {
     if(err) {
         console.error('Error while launching the server port: 8080');
