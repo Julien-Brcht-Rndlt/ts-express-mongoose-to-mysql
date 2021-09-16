@@ -14,7 +14,7 @@ app.use(express.json);
 app.use(express.urlencoded);
 
 //path '/wilders' routing  + controller
-const wilderController = require('../controllers/wilderController');
+const wilderController = require('./controllers/wilderController');
 app.use('/api/wilders', wilderController);
 
 app.listen(8080, (err) => {
