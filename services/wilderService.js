@@ -1,19 +1,19 @@
-const wilderDAO = require('../dao/wilderDAO');
+const wilderDAO = require('../repositories/wilderRepository');
 
 module.exports = {
     read: (id) => {
-        //TODO impl
+        return wilderDAO.find(id);
     },
     readAll: () => {
-        //TODO impl
+        return wilderDAO.findAll();
     },
     create: (name, city, skills) => {
-        //TODO impl
+        return wilderDAO.create(name, city, skills);
     },
-    update: (name, city, skills) => {
-        //TODO impl
+    update: (id, name, city, skills) => {
+        return wilderDAO.update(id, name, city, skills);
     },
     delete: (id) => {
-        //TODO impl
+        return wilderDAO.delete(id);
     },
 }

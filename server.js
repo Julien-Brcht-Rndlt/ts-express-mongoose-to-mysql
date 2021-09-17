@@ -5,7 +5,7 @@ const app = express();
 const mongoose = require('mongoose');
 // connection string: mongodb protocol + db server host + db name
 mongoose
-    .connect('mongodb://127.0.0.1:27017/wilderdb')
+    .connect('mongodb://127.0.0.1:27017/wilderdb', { autoIndex: true })
     .then(() => console.log('Connected to wildersdb database'))
     .catch((err) => console.log(`Error while connecting to database: ${err.message}`));
 
