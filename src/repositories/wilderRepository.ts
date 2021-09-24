@@ -1,4 +1,5 @@
 import mongoose, { Schema, model } from 'mongoose';
+import mysql from 'mysql';
 import Wilder from '../models/Wilder';
 import Skill from '../models/Skill';
 
