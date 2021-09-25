@@ -38,7 +38,7 @@ const wildersRepository = {
                         }
 
                         if(skillToLink){
-                            if(await skillsRepository.linkSkillToWilder(wilder.id, skillToLink.id, skill.votes)) {
+                            if(await skillsRepository.linkToWilder(wilder.id, skillToLink.id, skill.votes)) {
                                 wilder.skills.push(skillToLink);
                             }
                         }

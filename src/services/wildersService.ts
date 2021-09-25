@@ -25,7 +25,7 @@ const wilderService = {
      * @param {*} skills array of skills
      * @returns Promise<Wilder> a Promise
      */
-    create: (wilderName: string, city: string, skills: Array<Skill>): Promise<Wilder> => {
+    create: (wilderName: string, city: string, skills: Array<Skill>): Promise<Wilder | null> => {
         if(!wilderName || !city) {
             throw new Error('Error: Name and City are required');
         }
