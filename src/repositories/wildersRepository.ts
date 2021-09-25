@@ -118,13 +118,27 @@ const wildersRepository = {
      * @param {*} skills an array / a list of skills
      * @returns Promise<Wilder | null> a Promise that contains the updated wilder
      */
+    //TODO: adding skills update not supported for now
     update: async (id: string, wilderName: string, city: string, skills: Skill[]): Promise<Wilder | null> => {
-        await WilderModel.updateOne({ _id: id }, {
-            wilderName,
-            city,
-            skills
-        });
-        return WilderModel.findById(id).exec();
+        const sql = 'UPDATE wilders.wilder SET ? WHERE id = ?';
+        const connection = await getConnection();
+        let wilder: Wilder | null = null;
+        try {
+            const [result, fields]: [ResultSetHeader, any] = await connection.query({
+                sql,
+                values: [id, { wilderName, city }],
+                rowsAsArray: true
+            })
+
+            if(result.affectedRows > 0) {
+                wilder = await wildersRepository.find(id);
+            }
+
+        } catch(error) {
+            console.log(error);
+        } finally {
+            return wilder;
+        }
     },
     /**
      * Delete a wilder from mongoDB storage given its id 
