@@ -77,7 +77,26 @@ const skillsRepository = {
         }
     },
 
-    
+    // way #1 methods/operation linkSkillToWilder (way #3 moved to wildersSkillsRepository)
+    linkSkillToWilder: async (wilderId: number, skillId: number, votes: number): Promise<boolean> => {
+        const sql = 'INSERT INTO wilders.wilder_skill (id_wilder, id_skill, votes) VALUES (?, ?, ?)';
+        const connection: Connection = await getConnection();
+        let linked: boolean = false;
+
+        try {
+            const [result, fields]: [ResultSetHeader, any] = await connection.query({
+                sql,
+                values: [wilderId, skillId, votes],
+                rowsAsArray: true,
+            });
+
+            linked = result.affectedRows > 0;
+        } catch(error){
+            console.log(error);
+        } finally {
+            return linked;
+        }
+    },
 }
 
 export default skillsRepository;
