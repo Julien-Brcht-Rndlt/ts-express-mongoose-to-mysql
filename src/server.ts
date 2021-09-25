@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import wilderController from './controllers/wilderController';
+import wilderController from './controllers/wildersController';
 import { handleError } from './middlewares/errorsHandlers';
 
 const app = express();
