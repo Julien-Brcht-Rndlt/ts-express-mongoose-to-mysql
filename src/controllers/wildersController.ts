@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import wilderService from '../services/wilderService';
+import wilderService from '../services/wildersService';
 import Wilder from '../models/Wilder';
 
 const wilderRouter = express.Router();

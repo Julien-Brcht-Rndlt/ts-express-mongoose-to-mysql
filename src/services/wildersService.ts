@@ -1,4 +1,4 @@
-import wilderRepository from '../repositories/wilderRepository';
+import wilderRepository from '../repositories/wildersRepository';
 import Wilder from '../models/Wilder';
 import Skill from '../models/Skill';
 

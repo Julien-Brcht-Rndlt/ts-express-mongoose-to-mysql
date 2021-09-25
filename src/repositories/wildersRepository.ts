@@ -27,6 +27,25 @@ const wildersRepository = {
 
             if(result) {
                 wilder = await wildersRepository.find(String(result.insertId));
+
+                if(wilder) {
+                    for(const skill of skills) {
+
+                        let skillToLink = await skillsRepository.findByTitle(skill.title);
+                        if(!skillToLink){
+                            skillToLink = await skillsRepository.create(skill.title, skill.votes);
+                            
+                        }
+
+                        if(skillToLink){
+                            if(await skillsRepository.linkSkillToWilder(wilder.id, skillToLink.id, skill.votes)) {
+                                wilder.skills.push(skillToLink);
+                            }
+                        }
+                    }
+
+                }
+                
             }
 
         } catch(error){
