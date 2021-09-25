@@ -77,6 +77,32 @@ const skillsRepository = {
         }
     },
 
+    // way #2 moved to skillsRepository (way #3 moved to wildersSkillsRepository)
+    findByWilderId: async (id: number): Promise<Skill[]> => {
+        let skills: Skill[] = [];
+        const sql = `SELECT wisk.id_skill, wisk.title, wisk.votes 
+                    FROM wilders.wilder_skill as ws
+                    INNER JOIN wilders.skill as ON wisk.id_skill = sk.id
+                    WHERE id_wilder = ?`;
+
+        const connection = await getConnection();
+
+        try {
+            const [rows, fields]: [Array<any>, any] = await connection.query({
+                sql,
+                values: [id],
+                rowsAsArray: true
+            });
+
+           skills = rows.map((row) => new Skill(row));
+
+        } catch(error) {
+            console.log(error);
+        } finally {
+            return skills;
+        }
+    }
+
     // way #1 methods/operation linkSkillToWilder (way #3 moved to wildersSkillsRepository)
     linkSkillToWilder: async (wilderId: number, skillId: number, votes: number): Promise<boolean> => {
         const sql = 'INSERT INTO wilders.wilder_skill (id_wilder, id_skill, votes) VALUES (?, ?, ?)';

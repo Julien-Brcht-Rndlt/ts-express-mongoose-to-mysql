@@ -128,7 +128,6 @@ const wildersRepository = {
             return wilder;
         }
     },
-
     
 };
 
