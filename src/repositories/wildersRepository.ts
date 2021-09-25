@@ -72,6 +72,8 @@ const wildersRepository = {
     
             if(rows[0]) {       
                 wilder = new Wilder(rows[0]);
+                const skills = await skillsRepository.findByWilderId(wilder.id);
+                wilder.skills = skills;
             }
 
         } catch(error) {
@@ -96,6 +98,12 @@ const wildersRepository = {
             wilders = rows.map<Wilder>((row) => {
                 return new Wilder(row);
             });
+
+            for(const wilder of wilders) {
+                const skills = await skillsRepository.findByWilderId(wilder.id);
+                wilder.skills = skills;
+            }
+
         } catch(error) {
             console.log(error);
         } finally {
