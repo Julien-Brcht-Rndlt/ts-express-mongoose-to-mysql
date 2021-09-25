@@ -6,6 +6,7 @@ class Skill {
     constructor (values: [number, string, number]) {
         this.id = values[0];
         this.title = values[1];
+        this.votes = values[2];
     }
 };
 
