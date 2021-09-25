@@ -1,46 +1,87 @@
-import mongoose, { Schema, model } from 'mongoose';
-import connection from '../connection';
+import { getConnection } from '../connection';
 import Wilder from '../models/Wilder';
 import Skill from '../models/Skill';
+import { ResultSetHeader } from 'mysql2';
+import { Connection } from 'mysql2/promise';
+import WilderSkill from '../models/WilderSkill';
+import skillsRepository from './skillsRepository';
 
-const WilderSchema = new Schema<Wilder>({
-    wilderName: { type: String, unique: true },
-    city: String,
-    skills: [{ title: String, votes: Number }],
-});
-const WilderModel = model<Wilder>('wilder', WilderSchema);
-
-const wilderRepository = {
+const wildersRepository = {
     /**
-     * Create a wilder document given a name, city and a list of skills.
+     * Create a wilder into its table + add new skills + link wilder to the skills.
      * @param {*} wilderName wilder name
      * @param {*} city city
      * @param {*} skills array of skills
      * @returns Promise<Wilder> a Promise
      */
-    create: async (wilderName: string, city: string, skills: Skill[]): Promise<Wilder> => {
-        await WilderModel.init();
-        const wilder = new WilderModel({
-            wilderName,
-            city,
-            skills,
-        });
-        return wilder.save();
+    create: async (wilderName: string, city: string, skills: Skill[]): Promise<Wilder | null> => {
+        const sql: string = 'INSERT INTO wilders.wilder (wilderName, city) VALUES (?, ?)';
+        const connection = await getConnection();
+        let wilder: Wilder | null = null;
+        try {
+            const [result, fields]: [ResultSetHeader, any] = await connection.query({
+                sql,
+                values: [wilderName, city],
+                rowsAsArray: true
+            })
+
+            if(result) {
+                wilder = await wildersRepository.find(String(result.insertId));
+            }
+
+        } catch(error){
+            console.log(error);
+        } finally {
+            return wilder;
+        }
     },
     /**
      * Retrieve a wilder given its id
      * @param {*} id wilder document id
      * @returns Promise<Wilder | null> a Promise that contains a single wilder
      */
-    find: (id: string): Promise<Wilder | null> => {
-        return WilderModel.findById(id).exec();
+    find: async (id: string): Promise<Wilder | null> => {
+        const sql = 'SELECT * FROM wilders.wilder WHERE id = ?';
+        const connection: Connection = await getConnection();
+        let wilder: Wilder | null = null;
+        try {
+            const [rows, fields]: [Array<any>, any] = await connection.query({
+                sql,
+                values: [id],
+                rowsAsArray: true
+            });
+    
+            if(rows[0]) {       
+                wilder = new Wilder(rows[0]);
+            }
+
+        } catch(error) {
+            console.log(error);
+        } finally {
+            return wilder;
+        }
     },
     /**
      * Retrieve all the wilders saved as document (a array of wilders)
      * @returns Promise<Array<Wilder>> a Promise which contains an array of wilders 
      */
-    findAll: (): Promise<Array<Wilder>> => {
-        return WilderModel.find({}).exec();
+    findAll: async (): Promise<Array<Wilder>> => {
+        const sql = 'SELECT * FROM wilders.wilder';
+        const connection = await getConnection();
+        let wilders: Wilder[] = []; 
+        try {
+            const [rows, fields]: [Array<any>, any] = await connection.query({ 
+                sql,
+                rowsAsArray: true
+            });
+            wilders = rows.map<Wilder>((row) => {
+                return new Wilder(row);
+            });
+        } catch(error) {
+            console.log(error);
+        } finally {
+            return wilders;
+        }
     },
     /**
      * Update a wilder into the mongoDB storage, given its id
@@ -63,9 +104,32 @@ const wilderRepository = {
      * @param {*} id wilder document id
      * @returns Promise<Wilder | null> a Promise
      */
-    delete: (id: string): Promise<Wilder | null> => {
-        return WilderModel.findByIdAndDelete(id).exec();
+    delete: async (id: string): Promise<Wilder | null> => {
+        const sql = 'DELETE FROM wilders.wilder WHERE id = ?';
+        const connection: Connection = await getConnection();
+        let wilder: Wilder | null = null;
+        try {
+
+            wilder = await wildersRepository.find(id);
+
+            const [result, fields]: [ResultSetHeader, any] = await connection.query({
+                sql,
+                values: [id],
+                rowsAsArray: true
+            });
+
+            if(!result.affectedRows) {
+                throw new Error('Delete wilder failed!');
+            }
+
+        } catch(error) {
+            console.log(error);
+        } finally {
+            return wilder;
+        }
     },
+
+    
 };
 
-export default wilderRepository;
+export default wildersRepository;
